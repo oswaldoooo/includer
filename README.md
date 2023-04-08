@@ -27,6 +27,10 @@ includer init example.xml
 export INCLUDER_HOME=你的includer存放地址
 export PATH=$PATH:$INCLUDER_HOME
 ```
+快速安装脚本
+```shell
+curl https://brotherhoodhk.org/products/shells/includer_installer.sh
+```
 验证是否配置成功
 ```shell
 includer version
