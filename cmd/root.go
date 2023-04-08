@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	// "fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -26,6 +27,7 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+	// fmt.Printf("the args is %v\n", len(rootCmd.Flags()))
 }
 
 func init() {
