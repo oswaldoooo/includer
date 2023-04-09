@@ -2,7 +2,7 @@
 ### **简介**
 includer是用于c++的头文件管理的命令行工具。前提是包(包含头文件的目录)需要发布在github公开仓库上，当然你也可以拉取别人发布的开源包。
 ### **配置文件展示**
-
+beta1.0 改动:配置文件中的包配置下可不包含头文件搜寻，在不包含头文件设置下，默认会将整个包链接到当前目录的lib中
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <includer>
@@ -20,6 +20,10 @@ includer是用于c++的头文件管理的命令行工具。前提是包(包含�
 includer init
 #指定当前目录下配置文件,这里的exmaple.xml是示例，仅做参考
 includer init example.xml
+#在当前目录下生成配置文件模版,不指定文件名则默认以目录名为名生成
+includer generate
+#查看配置文件中的头文件是否覆盖(测试功能)
+includer reload
 ```
 ### 环境配置
 请将下列配置加入你的相关profile文件，以确保其生效。你也可使用快速安装[脚本](https://brotherhoodhk.org/products/shell/includer_installer.sh)
