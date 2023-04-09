@@ -29,7 +29,7 @@ export PATH=$PATH:$INCLUDER_HOME
 ```
 快速安装脚本
 ```shell
-curl https://brotherhoodhk.org/products/shells/includer_installer.sh
+curl https://brotherhoodhk.org/products/shells/includer_installer.sh bash
 ```
 验证是否配置成功
 ```shell
