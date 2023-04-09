@@ -16,6 +16,8 @@ import (
 
 type cnf struct {
 	XMLName      xml.Name    `xml:"includer"`
+	Description  string      `xml:",innerxml"`
+	Version      string      `xml:"version,attr"`
 	Include_Path []includers `xml:"include_config"`
 }
 type includers struct {
@@ -54,11 +56,18 @@ func includeparser(include *includers) {
 				//搜寻指定的头文件
 				headers := []string{}
 				// fmt.Printf("the header length is %v\n", len(include.Headers)) //debugline
-				for _, heads := range include.Headers {
-					headers = append(headers, heads.Name)
+				if len(include.Headers) > 0 {
+					for _, heads := range include.Headers {
+						headers = append(headers, heads.Name)
+					}
+					fmt.Println("start search header file") //debugline
+					err = searchheader(linklist[include.PackageName], headers)
+				} else {
+					//默认将整个目录链接到当前lib目录下
+					nowpath, _ := os.Getwd()
+					cmd := exec.Command("ln", "-s", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName))
+					err = cmd.Run()
 				}
-				fmt.Println("start search header file") //debugline
-				err = searchheader(linklist[include.PackageName], headers)
 			} else {
 				//不存在，则拉取包
 				ok = clonepackage(include.PackageName)
