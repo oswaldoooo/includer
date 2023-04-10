@@ -17,18 +17,30 @@ func Reload(filename string) {
 			filemap := make(map[string]struct{})
 			filemap = appendfiletomap(filemap, nowpath+"/lib")
 			for _, include := range cf.Include_Path {
-				comparemap := tomap(include.Headers)
-				info, err := os.Stat(nowpath + "/lib")
-				if err == nil && info.IsDir() {
-					for info := range filemap {
-						if _, ok := comparemap[info]; ok {
-							//若和includer中的header匹配，则删除其在map中的位置
-							delete(comparemap, info)
-						}
+				if len(include.Headers) == 0 {
+					//代表链接的是整个目录
+					therealname := getrepositoryname(include.PackageName)
+					bcinfo, err := os.Stat(nowpath + "/lib/" + therealname)
+					if err == nil && bcinfo.IsDir() {
+						//代表目录已链接过来，
+					} else {
+						fmt.Println(include.PackageName, "is not link here")
 					}
-					if len(comparemap) > 0 {
-						toprint := toleaveobj(comparemap)
-						fmt.Println(toprint)
+				} else {
+					//单个文件一个一个查找
+					comparemap := tomap(include.Headers)
+					info, err := os.Stat(nowpath + "/lib")
+					if err == nil && info.IsDir() {
+						for info := range filemap {
+							if _, ok := comparemap[info]; ok {
+								//若和includer中的header匹配，则删除其在map中的位置
+								delete(comparemap, info)
+							}
+						}
+						if len(comparemap) > 0 {
+							toprint := toleaveobj(comparemap)
+							fmt.Println(toprint)
+						}
 					}
 				}
 			}
