@@ -34,6 +34,7 @@ func Parser(content []byte) (err error) {
 	cnfinfo := new(cnf)
 	// fmt.Println("goto parser body")
 	err = xml.Unmarshal(content, cnfinfo)
+	// fmt.Println(err) //debugline
 	if err == nil {
 		// fmt.Println("do parser")
 		for _, include := range cnfinfo.Include_Path {
@@ -52,7 +53,14 @@ func includeparser(include *includers) {
 	start:
 		linklist, err := toolsbox.ParseList(rootpath + "/conf/link")
 		if err == nil {
-			if _, ok := linklist[include.PackageName]; ok {
+			if packid, ok := linklist[include.PackageName]; ok {
+				//验证包是否存在
+				info, err := os.Stat(rootpath + "/lib/" + packid)
+				if err != nil || !info.IsDir() {
+					//拉取包
+					clonepackage(include.PackageName, packid)
+				}
+
 				//搜寻指定的头文件
 				headers := []string{}
 				// fmt.Printf("the header length is %v\n", len(include.Headers)) //debugline
@@ -70,7 +78,7 @@ func includeparser(include *includers) {
 				}
 			} else {
 				//不存在，则拉取包
-				ok = clonepackage(include.PackageName)
+				ok = clonepackage(include.PackageName, "")
 				if ok {
 					goto start
 				} else {
@@ -86,7 +94,7 @@ func includeparser(include *includers) {
 		fmt.Println("package name is null")
 	}
 }
-func clonepackage(packagename string) bool {
+func clonepackage(packagename, targetname string) bool {
 	realpackname := getrepositoryname(packagename)
 	err := os.Mkdir(rootpath+"/lib/"+realpackname, 0755)
 	if err != nil {
@@ -105,8 +113,12 @@ func clonepackage(packagename string) bool {
 		fmt.Printf("download pacakge %v\n", packagename)
 		list, err := toolsbox.ParseList(rootpath + "/conf/link")
 		if err == nil {
-			respid := rand.Intn(899999) + 100000
-			list[packagename] = strconv.Itoa(respid)
+			respid, err := strconv.Atoi(targetname)
+			if len(targetname) == 0 || err != nil {
+				//未指定包ID，或之前的包ID被客户串改，则自动生成并记录包ID
+				respid = rand.Intn(899999) + 100000
+				list[packagename] = strconv.Itoa(respid)
+			}
 			cmd = exec.Command("mv", rootpath+"/lib/"+realpackname, rootpath+"/lib/"+strconv.Itoa(respid))
 			err = cmd.Run()
 			if err == nil {
