@@ -24,6 +24,8 @@ includer init example.xml
 includer generate
 #查看配置文件中的头文件是否覆盖(测试功能)
 includer reload
+#通过命令行给配置文件添加包,（必须指定配置文件名)
+includer package add packagename -c filename
 ```
 ### 环境配置
 请将下列配置加入你的相关profile文件，以确保其生效。你也可使用快速安装[脚本](https://brotherhoodhk.org/products/shell/includer_installer.sh)
