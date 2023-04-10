@@ -15,8 +15,8 @@ import (
 )
 
 type cnf struct {
-	XMLName      xml.Name    `xml:"includer"`
-	Description  string      `xml:",innerxml"`
+	XMLName xml.Name `xml:"includer"`
+	// Description  string      `xml:",innerxml"`
 	Version      string      `xml:"version,attr"`
 	Include_Path []includers `xml:"include_config"`
 }
