@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"includer/tools"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -33,9 +34,6 @@ type header struct {
 func Parser(content []byte) (err error) {
 	//预先检查package是否存在
 	err = checklink()
-	if err != nil {
-		return
-	}
 	cnfinfo := new(cnf)
 	err = xml.Unmarshal(content, cnfinfo)
 	if err == nil {
@@ -79,7 +77,6 @@ func includeparser(include *includers) {
 					//默认将整个目录链接到当前lib目录下
 					nowpath, _ := os.Getwd()
 					cmd := exec.Command("ln", "-s", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName))
-					// fmt.Printf("origin path %v\tlink path %v\n", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName)) //debugline
 					err = cmd.Run()
 				}
 			} else {
@@ -128,7 +125,7 @@ func clonepackage(packagename, targetname string) bool {
 			err = cmd.Run()
 			if err == nil {
 				_, err = toolsbox.FormatList(list, rootpath+"/conf/link")
-				linkAllLib(rootpath + "/lib/" + strconv.Itoa(respid))
+				linkAllLib(rootpath+"/lib/"+strconv.Itoa(respid), strconv.Itoa(respid))
 			}
 		}
 		if err != nil {
@@ -197,17 +194,15 @@ func searchheaderfromdir(origin map[string]struct{}, dirpath string) (resmap map
 	return
 }
 
-// 链接所有动态库至usr_lib目录(待测试)
-func linkAllLib(dirpath string) {
+// 链接所有动态库至usr_lib目录(待测试),并修改其中的头文件指向仓库地址
+func linkAllLib(dirpath string, packid string) {
 	fearr, err := ioutil.ReadDir(dirpath)
-	var namearr []string
 	if err == nil {
 		for _, fe := range fearr {
 			if fe.IsDir() {
-				linkAllLib(dirpath + "/" + fe.Name())
+				linkAllLib(dirpath+"/"+fe.Name(), packid)
 			} else {
-				namearr = strings.Split(fe.Name(), "/")
-				if strings.Contains(namearr[len(namearr)-1], ".so") || strings.Contains(namearr[len(namearr)-1], ".dylib") {
+				if strings.Contains(fe.Name(), ".so") || strings.Contains(fe.Name(), ".dylib") {
 					//连接到usr_lib目录，先验证是否存在
 					_, err = os.Stat(rootpath + "/usr_lib/" + fe.Name())
 					if err != nil {
@@ -217,6 +212,9 @@ func linkAllLib(dirpath string) {
 						//已存在不做任何操作
 						fmt.Println("library", fe.Name(), "alreay existed")
 					}
+				} else if strings.Contains(fe.Name(), ".h") || strings.Contains(fe.Name(), ".cpp") { //!!!注，该区域代码并为进行测试，请不要直接运行
+					replace_words := fmt.Sprintf(include_replace, rootpath+"/lib/"+packid)
+					err = tools.Replace(dirpath+"/"+fe.Name(), include_template, replace_words)
 				}
 			}
 		}

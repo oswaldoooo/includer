@@ -26,6 +26,10 @@ includer generate
 includer reload
 #通过命令行给配置文件添加包,（必须指定配置文件名)
 includer package add packagename -c filename
+#加载全部包,统一其中的第三方头文件引入路径不统一的问题
+includer load
+#加载指定的包(测试功能)
+includer load packagename
 ```
 ### 环境配置
 请将下列配置加入你的相关profile文件，以确保其生效。你也可使用快速安装[脚本](https://brotherhoodhk.org/products/shells/includer_installer.sh)

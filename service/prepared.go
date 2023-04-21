@@ -2,7 +2,10 @@ package service
 
 import (
 	"fmt"
+	"includer/tools"
+	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/oswaldoooo/octools/toolsbox"
 )
@@ -25,4 +28,24 @@ func checklink() (err error) {
 		_, err = toolsbox.FormatList(resmap, rootpath+"/conf/link")
 	}
 	return
+}
+
+// 替换repository在头文件或cpp文件
+func checkheader(dirpath, packid string) {
+	fearr, err := ioutil.ReadDir(dirpath)
+	if err == nil {
+		for _, fe := range fearr {
+			if fe.IsDir() && fe.Name()[0] != '.' {
+				checkheader(dirpath+"/"+fe.Name(), packid)
+			} else {
+				if strings.Contains(fe.Name(), ".h") || strings.Contains(fe.Name(), ".cpp") {
+					newwords := fmt.Sprintf(include_replace, rootpath+"/lib/"+packid)
+					err = tools.Replace(dirpath+"/"+fe.Name(), include_template, newwords)
+					if err != nil {
+						fmt.Println(err.Error())
+					}
+				}
+			}
+		}
+	}
 }
