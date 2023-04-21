@@ -31,6 +31,11 @@ type header struct {
 }
 
 func Parser(content []byte) (err error) {
+	//预先检查package是否存在
+	err = checklink()
+	if err != nil {
+		return
+	}
 	cnfinfo := new(cnf)
 	err = xml.Unmarshal(content, cnfinfo)
 	if err == nil {
@@ -74,7 +79,7 @@ func includeparser(include *includers) {
 					//默认将整个目录链接到当前lib目录下
 					nowpath, _ := os.Getwd()
 					cmd := exec.Command("ln", "-s", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName))
-					fmt.Printf("origin path %v\tlink path %v\n", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName)) //debugline
+					// fmt.Printf("origin path %v\tlink path %v\n", rootpath+"/lib/"+linklist[include.PackageName], nowpath+"/lib/"+getrepositoryname(include.PackageName)) //debugline
 					err = cmd.Run()
 				}
 			} else {
