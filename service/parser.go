@@ -71,7 +71,6 @@ func includeparser(include *includers) {
 					for _, heads := range include.Headers {
 						headers = append(headers, heads.Name)
 					}
-					fmt.Println("start search header file") //debugline
 					err = searchheader(linklist[include.PackageName], headers)
 				} else {
 					//默认将整个目录链接到当前lib目录下

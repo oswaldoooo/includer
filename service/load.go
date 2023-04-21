@@ -26,8 +26,6 @@ func LoadByName(packname string) {
 // 通过id加载
 func LoadById(packid string) {
 	parentpath := rootpath + "/lib/" + packid
-	//debugline
-	fmt.Println("start load", parentpath)
 	_, err := os.Stat(parentpath)
 	if err == nil {
 		checkheader(parentpath, packid)
