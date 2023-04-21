@@ -28,7 +28,7 @@ includer reload
 includer package add packagename -c filename
 ```
 ### 环境配置
-请将下列配置加入你的相关profile文件，以确保其生效。你也可使用快速安装[脚本](https://brotherhoodhk.org/products/shell/includer_installer.sh)
+请将下列配置加入你的相关profile文件，以确保其生效。你也可使用快速安装[脚本](https://brotherhoodhk.org/products/shells/includer_installer.sh)
 ```shell
 export INCLUDER_HOME=你的includer存放地址
 export PATH=$PATH:$INCLUDER_HOME

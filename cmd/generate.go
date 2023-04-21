@@ -25,6 +25,7 @@ var generateCmd = &cobra.Command{
 			for _, name := range args {
 				if strings.Contains(name, ".xml") {
 					service.Generate(name)
+					service.GenerateStart()
 				}
 			}
 		}
