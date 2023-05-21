@@ -14,14 +14,25 @@ wait for test
 func Build(packname ...string) {
 	var err error
 	var packid string
+	var cmd *exec.Cmd
 	for _, name := range packname {
 		packid, err = tools.GetPackId(name)
 		if err == nil {
-			errlist := build(rootpath + "/lib/" + packid)
-			if len(errlist) > 0 {
-				PrintFormat(errlist)
+			// errlist := build(rootpath + "/lib/" + packid)
+			_, err = os.Stat(rootpath + "/lib/" + packid + "/build.sh")
+			if err == nil {
+				err = os.Chdir(rootpath + "/lib/" + packid)
+				if err == nil {
+					cmd = exec.Command("bash", "build.sh")
+					err = cmd.Run()
+					if err != nil {
+						fmt.Println("execute the build.sh failed")
+					}
+				} else {
+					fmt.Println("access " + name + " directory failed")
+				}
 			} else {
-				fmt.Printf("%s build finished\n", name)
+				fmt.Println(name + " dont include build.sh")
 			}
 		}
 	}
